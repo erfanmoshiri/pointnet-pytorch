@@ -1,4 +1,3 @@
-from __future__ import print_function
 import argparse
 import os
 import random
@@ -6,7 +5,7 @@ import torch
 import torch.nn.parallel
 import torch.optim as optim
 import torch.utils.data
-from pointnet.dataset import ShapeNetDataset, ModelNetDataset
+from pointnet.dataset import ShapeNetDataset
 from pointnet.model import PointNetCls, feature_transform_regularizer
 import torch.nn.functional as F
 from tqdm import tqdm
@@ -37,31 +36,17 @@ print("Random Seed: ", opt.manualSeed)
 random.seed(opt.manualSeed)
 torch.manual_seed(opt.manualSeed)
 
-if opt.dataset_type == 'shapenet':
-    dataset = ShapeNetDataset(
-        root=opt.dataset,
-        classification=True,
-        npoints=opt.num_points)
+dataset = ShapeNetDataset(
+    root=opt.dataset,
+    classification=True,
+    npoints=opt.num_points)
 
-    test_dataset = ShapeNetDataset(
-        root=opt.dataset,
-        classification=True,
-        split='test',
-        npoints=opt.num_points,
-        data_augmentation=False)
-elif opt.dataset_type == 'modelnet40':
-    dataset = ModelNetDataset(
-        root=opt.dataset,
-        npoints=opt.num_points,
-        split='trainval')
-
-    test_dataset = ModelNetDataset(
-        root=opt.dataset,
-        split='test',
-        npoints=opt.num_points,
-        data_augmentation=False)
-else:
-    exit('wrong dataset type')
+test_dataset = ShapeNetDataset(
+    root=opt.dataset,
+    classification=True,
+    split='test',
+    npoints=opt.num_points,
+    data_augmentation=False)
 
 
 dataloader = torch.utils.data.DataLoader(
