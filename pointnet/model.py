@@ -27,15 +27,20 @@ class STN3d(nn.Module):
 
     def forward(self, x):
         batchsize = x.size()[0]
+
+
         x = F.relu(self.bn1(self.conv1(x)))
         x = F.relu(self.bn2(self.conv2(x)))
         x = F.relu(self.bn3(self.conv3(x)))
+
+
         x = torch.max(x, 2, keepdim=True)[0]
         x = x.view(-1, 1024)
 
         x = F.relu(self.bn4(self.fc1(x)))
         x = F.relu(self.bn5(self.fc2(x)))
         x = self.fc3(x)
+        x = x.view(-1, 3, 3)
 
         iden = Variable(torch.from_numpy(np.array([1,0,0,0,1,0,0,0,1]).astype(np.float32))).view(1,9).repeat(batchsize,1)
         if x.is_cuda:
@@ -100,11 +105,15 @@ class PointNetfeat(nn.Module):
 
     def forward(self, x):
         n_pts = x.size()[2]
+
         trans = self.stn(x)
         x = x.transpose(2, 1)
         x = torch.bmm(x, trans)
         x = x.transpose(2, 1)
+
+        # N x 46
         x = F.relu(self.bn1(self.conv1(x)))
+
 
         if self.feature_transform:
             trans_feat = self.fstn(x)
@@ -115,13 +124,18 @@ class PointNetfeat(nn.Module):
             trans_feat = None
 
         pointfeat = x
+
+
         x = F.relu(self.bn2(self.conv2(x)))
         x = self.bn3(self.conv3(x))
-        print(x.size())
+
+
+
         x = torch.max(x, 2, keepdim=True)[0]
-        print(x.size())
         x = x.view(-1, 1024)
-        print(x.size())
+
+
+
         if self.global_feat:
             return x, trans, trans_feat
         else:
@@ -142,10 +156,14 @@ class PointNetCls(nn.Module):
         self.relu = nn.ReLU()
 
     def forward(self, x):
+
+
         x, trans, trans_feat = self.feat(x)
         x = F.relu(self.bn1(self.fc1(x)))
         x = F.relu(self.bn2(self.dropout(self.fc2(x))))
         x = self.fc3(x)
+
+
         return F.log_softmax(x, dim=1), trans, trans_feat
 
 

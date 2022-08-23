@@ -8,13 +8,17 @@ import json
 
 
 class ShapeNetDataset(data.Dataset):
+
+    
     def __init__(self,
                  root,
                  npoints=2500,
                  classification=False,
                  class_choice=None,
                  split='train',
-                 data_augmentation=True):
+                 data_augmentation=True
+        ):
+
         self.npoints = npoints
         self.root = root
         self.catfile = os.path.join(self.root, 'synsetoffset2category.txt')
@@ -28,7 +32,7 @@ class ShapeNetDataset(data.Dataset):
                 ls = line.strip().split()
                 self.cat[ls[0]] = ls[1]
                 
-        if not class_choice is None:
+        if class_choice is not None:
             self.cat = {k: v for k, v in self.cat.items() if k in class_choice}
 
         self.id2cat = {v: k for k, v in self.cat.items()}
@@ -62,8 +66,8 @@ class ShapeNetDataset(data.Dataset):
         point_set = np.loadtxt(fn[1]).astype(np.float32)
         seg = np.loadtxt(fn[2]).astype(np.int64)
 
-        choice = np.random.choice(len(seg), self.npoints, replace=True)
         #resample
+        choice = np.random.choice(len(seg), self.npoints, replace=True)
         point_set = point_set[choice, :]
 
         point_set = point_set - np.expand_dims(np.mean(point_set, axis = 0), 0) # center
