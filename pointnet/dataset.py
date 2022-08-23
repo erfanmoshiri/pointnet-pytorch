@@ -31,7 +31,8 @@ class ShapeNetDataset(data.Dataset):
             for line in f:
                 ls = line.strip().split()
                 self.cat[ls[0]] = ls[1]
-                
+
+        self.allcat = self.cat          
         if class_choice is not None:
             self.cat = {k: v for k, v in self.cat.items() if k in class_choice}
 
@@ -55,8 +56,8 @@ class ShapeNetDataset(data.Dataset):
             for fn in self.meta[item]:
                 self.datapath.append((item, fn[0], fn[1]))
 
-        self.classes = dict(zip(sorted(self.cat), range(len(self.cat))))
-        print(self.classes)
+        self.classes = dict(zip(sorted(self.allcat), range(len(self.allcat))))
+        print('CLASSES', self.classes)
 
     # ---------------------------------------------------#
 
