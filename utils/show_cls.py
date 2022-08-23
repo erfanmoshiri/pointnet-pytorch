@@ -21,7 +21,7 @@ opt = parser.parse_args()
 print(opt)
 
 test_dataset = ShapeNetDataset(
-    root='shapenetcore_partanno_segmentation_benchmark_v0',
+    root='./../shapenetcore_partanno_segmentation_benchmark_v0',
     split='test',
     classification=True,
     npoints=opt.num_points,
@@ -35,6 +35,14 @@ classifier.cuda()
 classifier.load_state_dict(torch.load(opt.model))
 classifier.eval()
 
+import csv
+f = open('test_result.csv', 'w')
+writer = csv.writer(f)
+writer.writerow(['item', 'loss', 'accuracy'])
+
+mean_loss = 0
+mean_accu = 0
+t = 0
 
 for i, data in enumerate(testdataloader, 0):
     points, target = data
@@ -47,3 +55,13 @@ for i, data in enumerate(testdataloader, 0):
     pred_choice = pred.data.max(1)[1]
     correct = pred_choice.eq(target.data).cpu().sum()
     print('i:%d  loss: %f accuracy: %f' % (i, loss.data.item(), correct / float(32)))
+    accu = (correct / float(32)).item()
+    writer.writerow([i, loss.data.item(), accu])
+    
+    mean_loss += loss.data.item()
+    mean_accu += accu
+    t = i
+
+writer.writerow(['mean', mean_loss / t, mean_accu / t])
+f.close()
+
