@@ -49,7 +49,7 @@ class MyDataset(data.Dataset):
     def __getitem__(self, index):
         point_set = np.loadtxt(self.root).astype(np.float32)
 
-        choice = np.random.choice(len(point_set), len(point_set), replace=True)
+        choice = np.random.choice(len(point_set), int(len(point_set)), replace=True)
         #resample
         point_set = point_set[choice, :]
 

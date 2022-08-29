@@ -14,7 +14,7 @@ dataset = MyDataset(
     )
 
 model = PointNetCls(k=16)
-model.load_state_dict(torch.load('./cls_model_9.pth', map_location=torch.device('cpu')))
+model.load_state_dict(torch.load('./cls/cls_model_9.pth', map_location=torch.device('cpu')))
 model.eval()
 
 
@@ -31,7 +31,20 @@ points = points.transpose(2, 1)
 # points, target = points.cuda(), target.cuda()
 model = model.eval()
 pred, _, _ = model(points)
+print(pred.data[0].sum().item() / pred.data[0][3].item())
 pred_choice = pred.data.max(1)[1]
+print(pred.data[0])
+
+import csv
+f = open('results/webots_pred.csv', 'a')
+writer = csv.writer(f)
+# writer.writerow(['target class', 'prediction', 'calcuated probability'])
+writer.writerow([
+    'Car', 
+    pred.data[0].sum().item() / pred.data[0][3].item(), 
+    dataset.id2cat[int(pred_choice[0])]
+])
+
 
 # print(target.data)
 print('its a: ', dataset.id2cat[int(pred_choice[0])])

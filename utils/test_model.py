@@ -31,8 +31,11 @@ classifier.cuda()
 classifier.load_state_dict(torch.load(opt.model))
 classifier.eval()
 
+import os
 import csv
-f = open('test_result.csv', 'w')
+if not os.path.exists('results'):
+    os.makedirs('results/')
+f = open('results/test_result.csv', 'w')
 writer = csv.writer(f)
 writer.writerow(['item', 'loss', 'accuracy'])
 
@@ -56,7 +59,7 @@ for i, data in enumerate(testdataloader, 0):
     
     mean_loss += loss.data.item()
     mean_accu += accu
-    t = i
+    t = i+1
 
 writer.writerow(['mean', mean_loss / t, mean_accu / t])
 f.close()

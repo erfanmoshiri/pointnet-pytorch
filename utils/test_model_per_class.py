@@ -60,7 +60,7 @@ for c in classes:
 
     testdataloader = torch.utils.data.DataLoader(
         test_dataset, 
-        batch_size=len(test_dataset), 
+        batch_size=32, 
         shuffle=True
     )
 
@@ -86,12 +86,12 @@ for c in classes:
         correct = pred_choice.eq(target.data).cpu().sum()
         print('i:%d  loss: %f accuracy: %f' % (i, loss.data.item(), correct / float(32)))
         accu = (correct / float(32)).item()
-        writer.writerow([c, loss.data.item(), accu])
         
         mean_loss += loss.data.item()
         mean_accu += accu
-        t = i
+        t = i+1
 
-writer.writerow(['mean', mean_loss / t, mean_accu / t])
+    writer.writerow([c, mean_loss / t, mean_accu / t])
+
 f.close()
 
