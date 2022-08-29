@@ -93,19 +93,3 @@ class ShapeNetDataset(data.Dataset):
 
     def __len__(self):
         return len(self.datapath)
-
-
-if __name__ == '__main__':
-    dataset = sys.argv[1]
-    datapath = sys.argv[2]
-
-    if dataset == 'shapenet':
-        d = ShapeNetDataset(root = datapath)
-        print(len(d))
-        ps, seg = d[0]
-        print(ps.size(), ps.type(), seg.size(),seg.type())
-
-        d = ShapeNetDataset(root = datapath, classification = True)
-        print(len(d))
-        ps, cls = d[0]
-        print(ps.size(), ps.type(), cls.size(),cls.type())

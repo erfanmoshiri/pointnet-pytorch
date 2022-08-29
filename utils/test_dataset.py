@@ -38,7 +38,6 @@ print(pred.data[0])
 import csv
 f = open('results/webots_pred.csv', 'a')
 writer = csv.writer(f)
-# writer.writerow(['target class', 'prediction', 'calcuated probability'])
 writer.writerow([
     'Car', 
     pred.data[0].sum().item() / pred.data[0][3].item(), 
@@ -46,5 +45,4 @@ writer.writerow([
 ])
 
 
-# print(target.data)
 print('its a: ', dataset.id2cat[int(pred_choice[0])])
